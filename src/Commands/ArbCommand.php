@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Egyjs\Arb\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class ArbCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'arb';
 
     public $description = 'My command';
 
