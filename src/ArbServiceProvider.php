@@ -18,6 +18,7 @@ class ArbServiceProvider extends PackageServiceProvider
         $package
             ->name('arb')
             ->hasConfigFile()
+            ->hasRoute('web')
             ->hasCommand(ArbCommand::class);
     }
 }
