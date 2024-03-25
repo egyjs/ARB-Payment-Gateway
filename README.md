@@ -1,12 +1,13 @@
 # This is my package arb
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/egyjs/arb.svg?style=flat-square)](https://packagist.org/packages/egyjs/arb)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/egyjs/arb/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/egyjs/arb/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/egyjs/arb/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/egyjs/arb/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/egyjs/arb.svg?style=flat-square)](https://packagist.org/packages/egyjs/arb)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
+This package is a wrapper around the Al Rajhi Bank payment gateway API,
+it allows you to initiate a payment request hosted on the Bank website or on the Marchent website,
+and also allows you to refund a payment.
 ## Support us
 
 [<img src="https://github-ads.s3.eu-central-1.amazonaws.com/Arb.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/Arb)
@@ -23,12 +24,15 @@ You can install the package via composer:
 composer require egyjs/arb
 ```
 
-You can publish and run the migrations with:
+[//]: # (You can publish and run the migrations with:)
 
-```bash
-php artisan vendor:publish --tag="arb-migrations"
-php artisan migrate
-```
+[//]: # (```bash)
+
+[//]: # (php artisan vendor:publish --tag="arb-migrations")
+
+[//]: # (php artisan migrate)
+
+[//]: # (```)
 
 You can publish the config file with:
 
@@ -40,27 +44,133 @@ This is the contents of the published config file:
 
 ```php
 return [
+    'mode' => env('ARB_MODE', 'test'), // test or live
+    'test_merchant_endpoint' => 'https://securepayments.alrajhibank.com.sa/pg/payment/tranportal.htm',
+    'live_merchant_endpoint' => 'https://digitalpayments.alrajhibank.com.sa/pg/payment/tranportal.htm',
+    'test_bank_hosted_endpoint' => 'https://securepayments.alrajhibank.com.sa/pg/payment/hosted.htm',
+    'live_bank_hosted_endpoint' => 'https://digitalpayments.alrajhibank.com.sa/pg/payment/hosted.htm',
+    'tranportal_id' => env('ARB_TRANPORTAL_ID'),
+    'tranportal_password' => env('ARB_TRANPORTAL_PASSWORD'),
+    "resource_key" => env('ARB_RESOURCE_KEY'), // your resource key
+    "currency_code" => env('ARB_CURRENCY_CODE', '682'),
 ];
 ```
 
-Optionally, you can publish the views using
+[//]: # (Optionally, you can publish the views using)
 
-```bash
-php artisan vendor:publish --tag="arb-views"
-```
+[//]: # ()
+[//]: # (```bash)
+
+[//]: # (php artisan vendor:publish --tag="arb-views")
+
+[//]: # (```)
 
 ## Usage
 
+### Bank hosted payment
+to initiate a payment request hosted on the Bank website
 ```php
-$arb = new Egyjs\Arb();
-echo $arb->echoPhrase('Hello, Egyjs!');
+use Egyjs\Arb\Arb;
+    
+Arb::successUrl('http://localhost:8000/success/handle')
+    ->failUrl('http://localhost:8000/fail/handle');
+    
+$responce = Arb::initiatePayment(100); // 100 to be paid
+
+dd($responce);
+/** @example
+{#
+  +"success": true
+  +"url": "https://securepayments.alrajhibank.com.sa/pg/paymentpage.htm?PaymentID=?paymentId=000000000000000000"
+}
+*/
+```
+### Marchent hosted payment
+to initiate a payment request hosted on the Marchent website, you need to create a form for the card details, and pass 
+the card details to the `Arb::card()` method, then call the `Arb::initiatePayment()` method as shown below
+```php
+use Egyjs\Arb\Arb;
+    
+Arb::successUrl('http://localhost:8000/success/handle')
+    ->failUrl('http://localhost:8000/fail/handle');
+
+Arb::card([
+   'number' => '5105105105105100',
+   'year' => '20'.'24',
+   'month' => '12',
+   'name' => 'Ahmed',
+   'cvv' => '123',
+   'type' => Card::CREDIT
+]);    
+$responce = Arb::initiatePayment(100); // 100 to be paid
+
+dd($responce);
+/** @example
+{#
+  +"success": true
+  +"url": "https://securepayments.alrajhibank.com.sa/pg/payment/hosted.htm?paymentId=000000000000000000&id=000x0bAdcEF0HfZ"
+}
+*/
 ```
 
-## Testing
+### Refund a payment
+to refund a payment you need to call the `Arb::refund()` method as shown below
 
-```bash
-composer test
+[//]: # (todo: add the payment id to the refund method)
+```php
+use Egyjs\Arb\Arb;
+
+$responce = Arb::refund('000000000000000000', 100); // 100 to be refunded
+
+dd($responce);
+/** @example
+{#
+  +"success": true
+  +"data": {}
+}
+*/
 ```
+
+### Handle the response
+egyjs/arb has a built-in [event driven architecture (EDA)](https://en.wikipedia.org/wiki/Event-driven_architecture) system to handle the response from the bank;
+you can listen to the `ArbPaymentSuccessEvent` event to handle the success response,
+and the `ArbPaymentFailedEvent` event to handle the fail response, 
+
+The use of events allows for decoupling between the processing logic and the actions taken upon success or failure.
+By emitting events,
+the processing logic doesn't need to know about or be tightly coupled to the actions taken upon success or failure.
+you can listen to the events in 2 ways:
+1. using the `EventServiceProvider` class
+```php
+protected $listen = [
+    // ...
+    ArbPaymentSuccessEvent::class => [
+        LogSuccessArbPaymentListener::class, // add any listener classes you want to handle the success payment
+    ],
+    ArbPaymentFailedEvent::class => [
+        LogFailedArbPaymentListener::class, // add any listener classes you want to handle the failed payment
+    ],
+];
+```
+2. using the `Event::listen()` method
+```php
+Event::listen(ArbPaymentSuccessEvent::class, function (ArbPaymentSuccessEvent $event) {
+    // handle the success payment
+});
+
+Event::listen(ArbPaymentFailedEvent::class, function (ArbPaymentFailedEvent $event) {
+    // handle the failed payment
+});
+```
+
+[//]: # (## Testing)
+
+[//]: # ()
+[//]: # (```bash)
+
+[//]: # (composer test)
+
+[//]: # (```)
 
 ## Changelog
 

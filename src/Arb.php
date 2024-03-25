@@ -55,7 +55,7 @@ class Arb
                 "currencyCode" => config('arb.currency_code'),
                 "langid" => app()->getLocale(),
                 "responseURL" => $this->successUrl(),
-                "errorURL" => $this->errorUrl(),
+                "errorURL" => $this->failUrl(),
             ] + $this->data();
 
         if ($this->card !== null) {
@@ -100,7 +100,7 @@ class Arb
             "id" => config('arb.tranportal_id'),
             "trandata" => $this->encryption($encoded_data, config('arb.resource_key')),
             "responseURL" => $this->successUrl(),
-            "errorURL" => $this->errorUrl(),
+            "errorURL" => $this->failUrl(),
         ];
 
         return $this->wrapData($encryptedData);
@@ -178,7 +178,7 @@ class Arb
                 "password" => config('arb.tranportal_password'),
                 "action" => "2",
                 "responseURL" => $this->successUrl(),
-                "errorURL" => $this->errorUrl(),
+                "errorURL" => $this->failUrl(),
                 "trackId" =>  $trackId,
                 "transId" => $transId,
                 "currencyCode" => config('arb.currency_code'),
@@ -284,7 +284,7 @@ class Arb
      * @param string|null $url The URL to be set. If null, the current URL is returned.
      * @return string|self The current URL or the Arb object for method chaining.
      */
-    public function errorUrl(?string $url = null): string|self
+    public function failUrl(?string $url = null): string|self
     {
         if ($url) {
             $this->error_url = $url;
