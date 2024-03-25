@@ -6,7 +6,7 @@
 
 
 This package is a wrapper around the Al Rajhi Bank payment gateway API,
-it allows you to initiate a payment request hosted on the Bank website or on the Marchent website,
+it allows you to initiate a payment request hosted on the Bank website or on the merchant website,
 and also allows you to refund a payment.
 ## Support us
 
@@ -55,7 +55,14 @@ return [
     "currency_code" => env('ARB_CURRENCY_CODE', '682'),
 ];
 ```
-
+add the following to your `.env` file
+```env
+ARB_MODE="test" # test or live
+ARB_TRANPORTAL_ID="your_tranportal_id"
+ARB_TRANPORTAL_PASSWORD="your_tranportal_password"
+ARB_RESOURCE_KEY="your_resource_key"
+ARB_CURRENCY_CODE="682" # "682" = SAR 
+```
 [//]: # (Optionally, you can publish the views using)
 
 [//]: # ()
@@ -85,8 +92,8 @@ dd($responce);
 }
 */
 ```
-### Marchent hosted payment
-to initiate a payment request hosted on the Marchent website, you need to create a form for the card details, and pass 
+### merchant hosted payment
+to initiate a payment request hosted on the merchant website, you need to create a form for the card details, and pass 
 the card details to the `Arb::card()` method, then call the `Arb::initiatePayment()` method as shown below
 ```php
 use Egyjs\Arb\Facades\Arb;
