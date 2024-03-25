@@ -1,7 +1,7 @@
-# This is my package arb
+#  Al Rajhi Bank payment gateway API wrapper (ARB)
 
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/egyjs/arb/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/egyjs/arb/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/egyjs/arb/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/egyjs/arb/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/egyjs/ARB-Payment-Gateway/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/egyjs/ARB-Payment-Gateway/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/egyjs/ARB-Payment-Gateway/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/egyjs/ARB-Payment-Gateway/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/egyjs/arb.svg?style=flat-square)](https://packagist.org/packages/egyjs/arb)
 
 
