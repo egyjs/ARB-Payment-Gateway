@@ -70,7 +70,7 @@ return [
 ### Bank hosted payment
 to initiate a payment request hosted on the Bank website
 ```php
-use Egyjs\Arb\Arb;
+use Egyjs\Arb\Facades\Arb;
     
 Arb::successUrl('http://localhost:8000/success/handle')
     ->failUrl('http://localhost:8000/fail/handle');
@@ -89,7 +89,8 @@ dd($responce);
 to initiate a payment request hosted on the Marchent website, you need to create a form for the card details, and pass 
 the card details to the `Arb::card()` method, then call the `Arb::initiatePayment()` method as shown below
 ```php
-use Egyjs\Arb\Arb;
+use Egyjs\Arb\Facades\Arb;
+use Egyjs\Arb\Objects\Card;
     
 Arb::successUrl('http://localhost:8000/success/handle')
     ->failUrl('http://localhost:8000/fail/handle');
@@ -98,9 +99,9 @@ Arb::card([
    'number' => '5105105105105100',
    'year' => '20'.'24',
    'month' => '12',
-   'name' => 'Ahmed',
+   'name' => 'AbdulRahman',
    'cvv' => '123',
-   'type' => Card::CREDIT
+   'type' => Card::CREDIT // or Card::DEBIT
 ]);    
 $responce = Arb::initiatePayment(100); // 100 to be paid
 
@@ -118,7 +119,7 @@ to refund a payment you need to call the `Arb::refund()` method as shown below
 
 [//]: # (todo: add the payment id to the refund method)
 ```php
-use Egyjs\Arb\Arb;
+use Egyjs\Arb\Facades\Arb;
 
 $responce = Arb::refund('000000000000000000', 100); // 100 to be refunded
 
@@ -142,6 +143,9 @@ the processing logic doesn't need to know about or be tightly coupled to the act
 you can listen to the events in 2 ways:
 1. using the `EventServiceProvider` class
 ```php
+use Egyjs\Arb\Events\ArbPaymentFailedEvent;
+use Egyjs\Arb\Events\ArbPaymentSuccessEvent;
+
 protected $listen = [
     // ...
     ArbPaymentSuccessEvent::class => [
@@ -154,6 +158,9 @@ protected $listen = [
 ```
 2. using the `Event::listen()` method
 ```php
+use Egyjs\Arb\Events\ArbPaymentFailedEvent;
+use Egyjs\Arb\Events\ArbPaymentSuccessEvent;
+
 Event::listen(ArbPaymentSuccessEvent::class, function (ArbPaymentSuccessEvent $event) {
     // handle the success payment
 });
