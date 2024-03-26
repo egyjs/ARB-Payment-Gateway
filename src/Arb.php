@@ -10,6 +10,7 @@
  */
 namespace Egyjs\Arb;
 
+use App\Models\User;
 use Egyjs\Arb\Objects\Card;
 use Illuminate\Support\Facades\Http;
 
@@ -44,7 +45,7 @@ class Arb
     public function initiatePayment(int $amount): object
     {
         // todo get order id or something
-        $trackId = uniqid("ORD-".$amount);
+        $trackId = uniqid($amount*time());
 
         $data = [
                 "id" => config('arb.tranportal_id'),
@@ -56,6 +57,7 @@ class Arb
                 "langid" => app()->getLocale(),
                 "responseURL" => $this->successUrl(),
                 "errorURL" => $this->failUrl(),
+                "udf1" => base64_encode(json_encode($this->data()))
             ] + $this->data();
 
         if ($this->card !== null) {
@@ -197,7 +199,7 @@ class Arb
      * @param string $key The encryption key.
      * @return string The encrypted string.
      */
-    private function encryption($str, $key): string
+    private function encryption(string $str, string$key): string
     {
         $blocksize = openssl_cipher_iv_length("AES-256-CBC");
         $pad = $blocksize - (strlen($str) % $blocksize);

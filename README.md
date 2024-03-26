@@ -79,8 +79,6 @@ to initiate a payment request hosted on the Bank website
 ```php
 use Egyjs\Arb\Facades\Arb;
     
-Arb::successUrl('http://localhost:8000/success/handle')
-    ->failUrl('http://localhost:8000/fail/handle');
     
 $responce = Arb::initiatePayment(100); // 100 to be paid
 
@@ -99,8 +97,6 @@ the card details to the `Arb::card()` method, then call the `Arb::initiatePaymen
 use Egyjs\Arb\Facades\Arb;
 use Egyjs\Arb\Objects\Card;
     
-Arb::successUrl('http://localhost:8000/success/handle')
-    ->failUrl('http://localhost:8000/fail/handle');
 
 Arb::card([
    'number' => '5105105105105100',
@@ -139,6 +135,29 @@ dd($responce);
 */
 ```
 
+### manage data sent & received from the bank
+to send custom data to the bank, you can use the `Arb::data()` method before any transaction as shown below
+```php
+use Egyjs\Arb\Facades\Arb;
+Arb::data([
+    'request_id' => 23,
+    'user_id' => 43,
+]);
+// initiate a payment or make a refund
+```
+this data will be sent to the bank and will be returned in the response from the bank,
+`ArbPaymentSuccessEvent` will be fired with the received data from the bank as shown below
+```php
+use Egyjs\Arb\Events\ArbPaymentSuccessEvent;
+
+Event::listen(ArbPaymentSuccessEvent::class, function (ArbPaymentSuccessEvent $event) {
+    $response = $event->response;
+    // to get the data sent to the bank
+    $data = $response->getOriginalData();
+});
+```
+> Note: you can listen to the `ArbPaymentSuccessEvent` in both ways: `EventServiceProvider::$listen` or `Event::listen()` method
+
 ### Handle the response
 egyjs/arb has a built-in [event driven architecture (EDA)](https://en.wikipedia.org/wiki/Event-driven_architecture) system to handle the response from the bank;
 you can listen to the `ArbPaymentSuccessEvent` event to handle the success response,
@@ -174,6 +193,36 @@ Event::listen(ArbPaymentSuccessEvent::class, function (ArbPaymentSuccessEvent $e
 
 Event::listen(ArbPaymentFailedEvent::class, function (ArbPaymentFailedEvent $event) {
     // handle the failed payment
+});
+```
+
+### handle the response in the controller
+if you want to handle the using a custom route instead of the events,
+you can pass the success and fail urls to the `Arb::successUrl()` and `Arb::failUrl()` methods as shown below
+```php
+use Egyjs\Arb\Facades\Arb;
+
+Arb::successUrl('http://localhost:8000/arb/response')
+    ->failUrl('http://localhost:8000/arb/response');
+$responce = Arb::initiatePayment(100); // 100 to be paid
+
+dd($responce);
+/** @example
+{#
+  +"success": true
+  +"url": "http://localhost:8000/success/handle?paymentId=000000000000000000"
+}
+*/
+```
+your `/routes/web.php` file should look like this
+```php
+use Illuminate\Http\Request;
+Route::post('/arb/response', function (Request $request) {
+    if ($request->status == 'success') {
+        // handle the success payment
+    } else {
+        // handle the failed payment
+    }
 });
 ```
 
