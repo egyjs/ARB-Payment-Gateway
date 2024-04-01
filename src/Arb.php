@@ -17,12 +17,12 @@ class Arb
     /**
      * @var string The URL to redirect to after a successful payment.
      */
-    protected string $success_url = 'http://localhost:8000/arb/response';
+    protected string $success_url = 'https://api-dev.lockers.com.sa/arb/response';
 
     /**
      * @var string The URL to redirect to after a failed payment.
      */
-    protected string $error_url = 'http://localhost:8000/arb/response';
+    protected string $error_url = 'https://api-dev.lockers.com.sa/arb/response';
 
     /**
      * @var array The data to be sent with the payment request.
