@@ -6,7 +6,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use stdClass;
 
-
 /**
  * Class SuccessPayment
  *
@@ -31,12 +30,13 @@ use stdClass;
  */
 class SuccessPaymentResponse extends stdClass
 {
-
     use HasActionCode;
-    public bool $success = true;
-    public ?object $data = null;
-    public string $message = 'Payment Success';
 
+    public bool $success = true;
+
+    public ?object $data = null;
+
+    public string $message = 'Payment Success';
 
     public function __construct(array $data)
     {
@@ -50,22 +50,20 @@ class SuccessPaymentResponse extends stdClass
             ->setTimeFrom('00:00:00');
     }
 
-    public function getAmount() : float
+    public function getAmount(): float
     {
         return (float) $this->data->amount;
     }
 
-
-    public function getCardLast4Digits() : string
+    public function getCardLast4Digits(): string
     {
         return Str::substr($this->data->card, -4);
     }
 
     public function getOriginalData(): array|stdClass
     {
-         return json_decode(base64_decode($this->data->udf1));
+        return json_decode(base64_decode($this->data->udf1));
     }
-
 
     /**
      * Magic method to handle dynamic method calls to the class.
@@ -73,8 +71,8 @@ class SuccessPaymentResponse extends stdClass
      * This method is invoked when an inaccessible or non-existing method is called on the class.
      * It allows the class to respond to different method calls dynamically.
      *
-     * @param string $name The name of the method being called.
-     * @param array $arguments An enumerated array containing the parameters passed to the method.
+     * @param  string  $name  The name of the method being called.
+     * @param  array  $arguments  An enumerated array containing the parameters passed to the method.
      * @return mixed The value of the property named by $name.
      */
     public function __call(string $name, array $arguments)
@@ -85,6 +83,7 @@ class SuccessPaymentResponse extends stdClass
                 ->lcfirst()
                 ->replace('_', '')
                 ->__toString();
+
             return $this->data->$name;
         }
     }

@@ -2,9 +2,9 @@
 
 namespace Egyjs\Arb;
 
+use Egyjs\Arb\Commands\ArbCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Egyjs\Arb\Commands\ArbCommand;
 
 class ArbServiceProvider extends PackageServiceProvider
 {

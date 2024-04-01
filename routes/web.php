@@ -6,10 +6,10 @@ use Egyjs\Arb\Facades\Arb;
 use Egyjs\Arb\Objects\Responses\SuccessPaymentResponse;
 
 Route::post('/arb/response', function () {
-    if(request()->has('trandata')) {
+    if (request()->has('trandata')) {
         $data = request()->trandata;
         $result = Arb::result($data);
-        if($result->success) {
+        if ($result->success) {
             // payment success
             event(new ArbPaymentSuccessEvent(new SuccessPaymentResponse($result->data)));
         } else {

@@ -2,9 +2,9 @@
 
 namespace Egyjs\Arb\Tests;
 
+use Egyjs\Arb\ArbServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Egyjs\Arb\ArbServiceProvider;
 
 class TestCase extends Orchestra
 {

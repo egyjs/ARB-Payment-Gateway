@@ -2,19 +2,22 @@
 
 namespace Egyjs\Arb\Objects;
 
-use Illuminate\Support\Collection;
 class Card
 {
     public const CREDIT = 'C';
+
     public const DEBIT = 'D';
 
-
     protected string $expYear;
+
     protected string $expMonth;
 
     protected string $member;
+
     protected string $cvv2;
+
     protected string $cardNo;
+
     protected string $cardType;
 
     public function __construct(array $data)

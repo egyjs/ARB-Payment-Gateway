@@ -10,5 +10,6 @@ class ArbPaymentSuccessEvent
     use Dispatchable;
 
     public function __construct(public SuccessPaymentResponse $response)
-    {}
+    {
+    }
 }
