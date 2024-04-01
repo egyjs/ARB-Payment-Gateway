@@ -17,12 +17,12 @@ class Arb
     /**
      * @var string The URL to redirect to after a successful payment.
      */
-    protected string $success_url = 'https://api-dev.lockers.com.sa/arb/response';
+    protected ?string $success_url;
 
     /**
      * @var string The URL to redirect to after a failed payment.
      */
-    protected string $error_url = 'https://api-dev.lockers.com.sa/arb/response';
+    protected ?string $error_url;
 
     /**
      * @var array The data to be sent with the payment request.
@@ -284,7 +284,7 @@ class Arb
             return $this;
         }
 
-        return $this->success_url;
+        return $this->success_url ?? config('arb.redirect.success');
     }
 
     /**
@@ -301,7 +301,7 @@ class Arb
             return $this;
         }
 
-        return $this->error_url;
+        return $this->error_url ?? config('arb.redirect.fail');
     }
 
     /**
