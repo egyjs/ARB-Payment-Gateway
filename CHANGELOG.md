@@ -2,6 +2,10 @@
 
 All notable changes to `Arb` will be documented in this file.
 
+## 1.0.3 - 2024-04-01
+
+**Full Changelog**: https://github.com/egyjs/ARB-Payment-Gateway/compare/1.0.2...1.0.3
+
 ## 1.0.2 - 2024-03-25
 
 lower php v
