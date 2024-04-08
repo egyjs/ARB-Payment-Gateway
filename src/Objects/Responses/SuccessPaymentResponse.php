@@ -62,7 +62,13 @@ class SuccessPaymentResponse extends stdClass
 
     public function getOriginalData(): array|stdClass
     {
-        return json_decode(base64_decode($this->data->udf1));
+        // get all keys starts with udf, concat all values of the keys "udf1","udf2"
+        $udfs = collect($this->data)
+            ->filter(fn ($value, $key) => Str::startsWith($key, 'udf'))
+            ->sortKeys()
+            ->values()
+            ->implode('');
+        return json_decode(base64_decode($udfs));
     }
 
     /**

@@ -44,7 +44,6 @@ class Arb
     {
         // todo get order id or something
         $trackId = uniqid($amount * time());
-
         $data = [
             'id' => config('arb.tranportal_id'),
             'password' => config('arb.tranportal_password'),
@@ -55,7 +54,7 @@ class Arb
             'langid' => app()->getLocale(),
             'responseURL' => $this->successUrl(),
             'errorURL' => $this->failUrl(),
-            'udf1' => base64_encode(json_encode($this->data())),
+            ...$this->generateUdfs(),
         ] + $this->data();
 
         if ($this->card !== null) {
@@ -319,5 +318,23 @@ class Arb
         }
 
         return $this->card;
+    }
+
+    public function generateUdfs()
+    {
+        $maxChar = 255;
+        $maxudfs = 5;
+        $str = base64_encode(json_encode($this->data()));
+        // split the string into chunks of 255 characters
+        $chunks = str_split($str, $maxChar);
+        if (count($chunks) > $maxudfs) {
+            throw new \Exception('Data is too large to be sent');
+        }
+
+        $udfs = [];
+        foreach ($chunks as $key => $chunk) {
+            $udfs["udf".($key + 1)] = $chunk;
+        }
+        return $udfs;
     }
 }
