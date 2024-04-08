@@ -2,6 +2,14 @@
 
 All notable changes to `Arb` will be documented in this file.
 
+## 1.0.6 - 2024-04-08
+
+### What's Changed
+
+* use all udf1..5 as `getOriginalData()` to support send more data
+
+**Full Changelog**: https://github.com/egyjs/ARB-Payment-Gateway/compare/1.0.5...1.0.6
+
 ## 1.0.5 - 2024-04-02
 
 ### What's Changed
